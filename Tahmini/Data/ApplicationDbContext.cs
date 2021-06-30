@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Tahmini.Models;
 
 namespace Tahmini.Data
 {
@@ -12,5 +13,9 @@ namespace Tahmini.Data
             : base(options)
         {
         }
+
+        public DbSet<Test> Tests { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Answer> Answers { get; set; }
     }
 }

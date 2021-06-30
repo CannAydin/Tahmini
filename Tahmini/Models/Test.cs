@@ -29,7 +29,7 @@ namespace Tahmini.Models
         {
             get
             {
-                var remainingHour = (DateTime.Now - EndDate);
+                var remainingHour = (EndDate - DateTime.Now);
                 return ("Kalan zaman: " + remainingHour.Days.ToString() + " gün");
             }
         }

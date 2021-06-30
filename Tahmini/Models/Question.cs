@@ -12,10 +12,12 @@ namespace Tahmini.Models
         public int TestId { get; set; }
         public virtual Test test { get; set; }
 
-        [Display(Name ="Question")]
+        [Display(Name ="Enter Question")]
+        [DataType(DataType.MultilineText)]
         public string QuestionText { get; set; }
-
+        [Display(Name = "Enter First Option")]
         public string OptionOne { get; set; }
+        [Display(Name = "Enter Second Option")]
         public string OptionTwo { get; set; }
     }
 }

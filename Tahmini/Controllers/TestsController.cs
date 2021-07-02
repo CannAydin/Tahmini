@@ -22,7 +22,8 @@ namespace Tahmini.Controllers
         // GET: Tests
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Tests.ToListAsync());
+            var applicationDbContext = _context.Tests.Include(q => q.AllQuestions);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Tests/Details/5

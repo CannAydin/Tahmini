@@ -22,14 +22,8 @@ namespace Tahmini.Controllers
         // GET: Questions
         public async Task<IActionResult> Index(int TestId)
         {
-            if(TestId != null)
-            {
-                var query = _context.Questions.Include(q => q.test).Where(q => q.TestId == TestId);
-                return View(await query.ToListAsync());
-            }
-            var applicationDbContext = _context.Questions.Include(q => q.test);
-            return View(await applicationDbContext.ToListAsync());
-
+            var applicationDbContext = _context.Questions.Include(q => q.test).Where(q => q.TestId == TestId);
+            return View(await applicationDbContext.ToListAsync());            
         }
 
         // GET: Questions/Details/5

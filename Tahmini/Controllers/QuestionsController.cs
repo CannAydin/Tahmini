@@ -22,6 +22,10 @@ namespace Tahmini.Controllers
         // GET: Questions
         public async Task<IActionResult> Index(int TestId)
         {
+            if(TestId == 0)
+            {
+                return Redirect("tests");
+            }
             var applicationDbContext = _context.Questions.Include(q => q.test).Where(q => q.TestId == TestId);
             return View(await applicationDbContext.ToListAsync());            
         }
@@ -46,9 +50,11 @@ namespace Tahmini.Controllers
         }
 
         // GET: Questions/Create
-        public IActionResult Create()
+        public IActionResult Create(int TestId)
         {
-            ViewData["TestId"] = new SelectList(_context.Tests, "Id", "Id");
+            var applicationDbContext = _context.Questions.Include(q => q.test);
+            //ViewData["TestId"] = new SelectList(_context.Tests, "Id", "Title");
+            ViewData["TestId"] = new SelectList(_context.Tests, "Id", "Title");
             return View();
         }
 
@@ -63,8 +69,11 @@ namespace Tahmini.Controllers
             {
                 _context.Add(question);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var applicationDbContext = _context.Questions.Include(q => q.test).Where(q => q.TestId == question.TestId);
+                //return View(await applicationDbContext.ToListAsync());
+                return RedirectToAction(nameof(Index), new { TestId = question.TestId });
             }
+            
             ViewData["TestId"] = new SelectList(_context.Tests, "Id", "Id", question.TestId);
             return View(question);
         }
@@ -82,7 +91,7 @@ namespace Tahmini.Controllers
             {
                 return NotFound();
             }
-            ViewData["TestId"] = new SelectList(_context.Tests, "Id", "Id", question.TestId);
+            ViewData["TestId"] = new SelectList(_context.Tests, "Id", "Title", question.TestId);
             return View(question);
         }
 

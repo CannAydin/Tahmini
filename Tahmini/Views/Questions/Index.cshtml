@@ -4,63 +4,103 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
-@if(@Model.Any()) 
+<h1>@ViewData["TestId"]</h1>
+@if (User.Identity.Name == "abc@abc.com")
 {
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.test)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.QuestionText)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OptionOne)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OptionTwo)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
+
+@if (@Model.Any() && User.Identity.Name == "abc@abc.com")
+{
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.test.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.QuestionText)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OptionOne)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OptionTwo)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.test)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.QuestionText)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OptionOne)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OptionTwo)
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.test.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.QuestionText)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OptionOne)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OptionTwo)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @foreach (var question in Model)
+    {
+        <form asp-action="Create" asp-controller="Answers" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <p class="question">@question.QuestionText</p>
+            <div class="form-group" name="QuestionId" asp-for="@question.Id">
+                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="A">
+                <label asp-for="@question.Id">@question.OptionOne</label>
+                <br />
+                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="B">
+                <label asp-for="@question.Id">@question.OptionTwo</label>
+                <br />
+                <input type="hidden" asp-for="@question.Id" name="QuestionId" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Gönder" class="btn btn-primary" />
+            </div>
+        </form>
+    }
 }
 
-else 
+else
 {
-    <div class="text-center">
-        <h1 class="display-4">There is no question on this test</h1>
-    </div>
+    @foreach (var question in Model)
+    {
+        <form asp-action="Create" asp-controller="Answers" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <p class="question">@question.QuestionText</p>
+            <div class="form-group" name="QuestionId" asp-for="@question.Id">
+                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="A">
+                <label asp-for="@question.Id">@question.OptionOne</label>
+                <br />
+                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="B">
+                <label asp-for="@question.Id">@question.OptionTwo</label>
+                <br />
+                <input type="hidden" asp-for="@question.Id" name="QuestionId" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Gönder" class="btn btn-primary" />
+            </div>
+        </form>
+    }
 }
+
 

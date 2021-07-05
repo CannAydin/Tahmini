@@ -1,14 +1,20 @@
 ﻿@model IEnumerable<Tahmini.Models.Test>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
 
 @{
     ViewData["Title"] = "Index";
 }
- 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h1>Testler</h1>
+
+@if (User.Identity.Name == "abc@abc.com")
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -31,31 +37,44 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RemainingTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AllQuestions.Count)
-            </td>
-            <td>
-                <a asp-action="Index" asp-controller="Questions" asp-route-TestId="@item.Id">Show Questions</a> |
-                <a asp-action="Create" asp-controller="Questions" asp-route-TestId="@item.Id">Add Question</a> |
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RemainingTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AllQuestions.Count)
+                </td>
+
+                @if (User.Identity.Name == "abc@abc.com")
+                {
+                    <td>
+                        <a asp-action="Index" asp-controller="Questions" asp-route-TestId="@item.Id">Show Questions</a> |
+                        <a asp-action="Create" asp-controller="Questions" asp-route-TestId="@item.Id">Add Question</a> |
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-action="Index" asp-controller="Questions" asp-route-TestId="@item.Id">Show Questions</a>
+                    </td>
+                }
+
+            </tr>
+        }
     </tbody>
 </table>

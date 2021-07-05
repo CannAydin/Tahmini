@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Tahmini.Models.Answer>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Sorular</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.QuestionId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.question.QuestionText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OptionText)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.question.TestId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.question.QuestionText)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OptionText)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

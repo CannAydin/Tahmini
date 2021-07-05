@@ -2,41 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Tahmini.Data;
 using Tahmini.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Tahmini.Controllers
 {
-    public class TestsController : Controller
+    public class AnswersController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<User> userManager;
-
-        public TestsController(ApplicationDbContext context, UserManager<User> userManager)
+        private readonly UserManager<User> _userManager;
+        public AnswersController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
-            this.userManager = userManager;
+            _userManager = userManager;
         }
 
-        // GET: Tests
+        // GET: Answers
         public async Task<IActionResult> Index()
         {
-            var currentUser = await userManager.GetUserAsync(HttpContext.User);
-            var applicationDbContext = _context.Tests.Include(q => q.AllQuestions);
+            var applicationDbContext = _context.Answers.Include(a => a.question);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        public async Task<IActionResult> Index1()
-        {
-            var applicationDbContext = _context.Tests.Include(q => q.AllQuestions);
-            return View(await applicationDbContext.ToListAsync());
-        }
-
-        // GET: Tests/Details/5
+        // GET: Answers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,39 +37,46 @@ namespace Tahmini.Controllers
                 return NotFound();
             }
 
-            var test = await _context.Tests
+            var answer = await _context.Answers
+                .Include(a => a.question)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (test == null)
+            if (answer == null)
             {
                 return NotFound();
             }
 
-            return View(test);
+            return View(answer);
         }
 
-        // GET: Tests/Create
+        // GET: Answers/Create
         public IActionResult Create()
         {
+            ViewData["QuestionId"] = new SelectList(_context.Questions, "Id", "Id");
             return View();
         }
 
-        // POST: Tests/Create
+        // POST: Answers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,StartDate,EndDate")] Test test)
+        public async Task<IActionResult> Create([Bind("Id,QuestionId,OptionText")] Answer answer)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(test);
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                answer.userId = currentUser.Id;
+                answer.question = await _context.Questions.FindAsync(answer.QuestionId);
+                _context.Add(answer);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(QuestionsController.Index));
             }
-            return View(test);
+            ViewData["QuestionId"] = new SelectList(_context.Questions, "Id", "Id", answer.QuestionId);
+            ViewData["TestId"] = new SelectList(_context.Questions, "Id", "Id", answer.QuestionId);
+            return View(answer);
         }
 
-        // GET: Tests/Edit/5
+        // GET: Answers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -84,22 +84,23 @@ namespace Tahmini.Controllers
                 return NotFound();
             }
 
-            var test = await _context.Tests.FindAsync(id);
-            if (test == null)
+            var answer = await _context.Answers.FindAsync(id);
+            if (answer == null)
             {
                 return NotFound();
             }
-            return View(test);
+            ViewData["QuestionId"] = new SelectList(_context.Questions, "Id", "Id", answer.QuestionId);
+            return View(answer);
         }
 
-        // POST: Tests/Edit/5
+        // POST: Answers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,StartDate,EndDate")] Test test)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,QuestionId,OptionText")] Answer answer)
         {
-            if (id != test.Id)
+            if (id != answer.Id)
             {
                 return NotFound();
             }
@@ -108,12 +109,12 @@ namespace Tahmini.Controllers
             {
                 try
                 {
-                    _context.Update(test);
+                    _context.Update(answer);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TestExists(test.Id))
+                    if (!AnswerExists(answer.Id))
                     {
                         return NotFound();
                     }
@@ -124,10 +125,11 @@ namespace Tahmini.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(test);
+            ViewData["QuestionId"] = new SelectList(_context.Questions, "Id", "Id", answer.QuestionId);
+            return View(answer);
         }
 
-        // GET: Tests/Delete/5
+        // GET: Answers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,30 +137,31 @@ namespace Tahmini.Controllers
                 return NotFound();
             }
 
-            var test = await _context.Tests
+            var answer = await _context.Answers
+                .Include(a => a.question)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (test == null)
+            if (answer == null)
             {
                 return NotFound();
             }
 
-            return View(test);
+            return View(answer);
         }
 
-        // POST: Tests/Delete/5
+        // POST: Answers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var test = await _context.Tests.FindAsync(id);
-            _context.Tests.Remove(test);
+            var answer = await _context.Answers.FindAsync(id);
+            _context.Answers.Remove(answer);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TestExists(int id)
+        private bool AnswerExists(int id)
         {
-            return _context.Tests.Any(e => e.Id == id);
+            return _context.Answers.Any(e => e.Id == id);
         }
     }
 }

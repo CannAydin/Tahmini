@@ -16,5 +16,10 @@ namespace Tahmini.Models
 
         public string OptionText { get; set; }
 
+        public virtual Test tests { get; set; }
+
+        public string userId { get; set; }
+        public virtual User user { get; set; }
+
     }
 }

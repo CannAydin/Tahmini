@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tahmini.Data;
 
 namespace Tahmini.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210703195550_V2")]
+    partial class V2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,10 +84,6 @@ namespace Tahmini.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -137,8 +135,6 @@ namespace Tahmini.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -241,16 +237,11 @@ namespace Tahmini.Data.Migrations
                     b.Property<int?>("testsId")
                         .HasColumnType("int");
 
-                    b.Property<string>("userId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
 
                     b.HasIndex("testsId");
-
-                    b.HasIndex("userId");
 
                     b.ToTable("Answers");
                 });
@@ -303,19 +294,6 @@ namespace Tahmini.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tests");
-                });
-
-            modelBuilder.Entity("Tahmini.Models.User", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Surname")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -381,15 +359,9 @@ namespace Tahmini.Data.Migrations
                         .WithMany("AllAnswers")
                         .HasForeignKey("testsId");
 
-                    b.HasOne("Tahmini.Models.User", "user")
-                        .WithMany("Answers")
-                        .HasForeignKey("userId");
-
                     b.Navigation("question");
 
                     b.Navigation("tests");
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("Tahmini.Models.Question", b =>
@@ -408,11 +380,6 @@ namespace Tahmini.Data.Migrations
                     b.Navigation("AllAnswers");
 
                     b.Navigation("AllQuestions");
-                });
-
-            modelBuilder.Entity("Tahmini.Models.User", b =>
-                {
-                    b.Navigation("Answers");
                 });
 #pragma warning restore 612, 618
         }

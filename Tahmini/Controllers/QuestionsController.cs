@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,20 +14,25 @@ namespace Tahmini.Controllers
     public class QuestionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public QuestionsController(ApplicationDbContext context)
+        public QuestionsController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Questions
         public async Task<IActionResult> Index(int TestId)
         {
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
             if(TestId == 0)
             {
                 return Redirect("tests");
             }
             var applicationDbContext = _context.Questions.Include(q => q.test).Where(q => q.TestId == TestId);
+            var CurrentTest = await _context.Tests.FindAsync(TestId);
+            ViewData["TestId"] = CurrentTest.Title;
             return View(await applicationDbContext.ToListAsync());            
         }
 

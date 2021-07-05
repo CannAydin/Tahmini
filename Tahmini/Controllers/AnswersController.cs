@@ -23,10 +23,21 @@ namespace Tahmini.Controllers
         }
 
         // GET: Answers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int TestId)
         {
-            var applicationDbContext = _context.Answers.Include(a => a.question);
-            return View(await applicationDbContext.ToListAsync());
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            var query = _context.Answers.Include(a => a.question).Include(a => a.user).AsQueryable();
+            if (currentUser.Name =="abc")
+            {
+                return View(await query.ToListAsync());
+            }
+            else
+            {
+
+                query = query.Where(a => a.userId == currentUser.Id).Where(q => q.question.TestId == TestId).OrderByDescending(t => t.Id).Take(1);
+                return View(await query.ToListAsync());
+            }
+            
         }
 
         // GET: Answers/Details/5
@@ -69,7 +80,7 @@ namespace Tahmini.Controllers
                 answer.question = await _context.Questions.FindAsync(answer.QuestionId);
                 _context.Add(answer);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(QuestionsController.Index));
+                return RedirectToAction(nameof(QuestionsController.Index), new { TestId = answer.question.TestId });
             }
             ViewData["QuestionId"] = new SelectList(_context.Questions, "Id", "Id", answer.QuestionId);
             ViewData["TestId"] = new SelectList(_context.Questions, "Id", "Id", answer.QuestionId);

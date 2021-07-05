@@ -65,10 +65,10 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <p class="question">@question.QuestionText</p>
             <div class="form-group" name="QuestionId" asp-for="@question.Id">
-                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="A">
+                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="@question.OptionOne">
                 <label asp-for="@question.Id">@question.OptionOne</label>
                 <br />
-                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="B">
+                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="@question.OptionTwo">
                 <label asp-for="@question.Id">@question.OptionTwo</label>
                 <br />
                 <input type="hidden" asp-for="@question.Id" name="QuestionId" />
@@ -88,10 +88,10 @@ else
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <p class="question">@question.QuestionText</p>
             <div class="form-group" name="QuestionId" asp-for="@question.Id">
-                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="A">
+                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="@question.OptionOne">
                 <label asp-for="@question.Id">@question.OptionOne</label>
                 <br />
-                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="B">
+                <input asp-for="@question.Id" class="control-label" type="radio" name="OptionText" value="@question.OptionTwo">
                 <label asp-for="@question.Id">@question.OptionTwo</label>
                 <br />
                 <input type="hidden" asp-for="@question.Id" name="QuestionId" />
